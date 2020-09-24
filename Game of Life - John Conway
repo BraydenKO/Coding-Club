@@ -1,10 +1,16 @@
 grid = [] #Grid that will be displayed and read from
+
 tempgrid=[] #Grid that will temporarily hold the updates
 #to the grid to avoid interference 
+
 l=3 #Height
+
 w=3 #Width
+
 steps=5 #Number of frames
+
 igrid=[(0,1),(1,1),(2,1)] #Initial live cells
+
 neighbors=[(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1)]
 validneighbors=[] #neighbors is a list containing the relative positions of each neighbor
 #valid neighbors contains the values of the neighbors that exist on the grid
