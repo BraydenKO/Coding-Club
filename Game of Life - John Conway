@@ -28,6 +28,7 @@ def initgrid():
         grid[r][c] = 1
     printgrid(grid)
     updategrid(grid,validneighbors,tempgrid)
+
 def updategrid(grid,validneighbors,tempgrid):
     for i in range(steps):
         for y_idx, y in enumerate(grid): #iterate the row and index
@@ -47,4 +48,5 @@ def updategrid(grid,validneighbors,tempgrid):
         tempgrid=[[0]*w for i in range(l)] #Before I added this line grid would change every time
 #tempgrid was changed and when I added this line it somehow fixed it... I'm not sure why.
         printgrid(grid)
+
 initgrid()
