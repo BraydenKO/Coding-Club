@@ -11,11 +11,11 @@ def print_board(board):
 
 #function: changes element - in list to either X or O 
 def play_move(board, player):
-    global running
+    global winner
     y = input("{}, Enter row number (either 0, 1 or 2 where the top is 0): ".format(player))
     x = input("{}, Enter column number (either 0, 1, or 2 where the leftmost is 0: ".format(player))
     if y == "stop" or x == "stop":
-        running = False
+        winner = "No one"
         return
     y = int(y)
     x = int(x)
@@ -23,30 +23,28 @@ def play_move(board, player):
         board[y][x] = player
     else:
         print("That spot is already taken!")
-        play_move(board,player)
+        play_move(board,player, winner)
 
 #function: Tests if any of the winner possibilities is true and returns the winner
 def get_winner(board):
-    global running
+    if winner != None:
+        return winner
     for player in ["X","O"]:
         for y in board:
             if all(cell == player for cell in y):
-                running = False 
                 return player
         for column in get_columns(board):
-            if all(cell == player for cell in column):
-                running = False 
+            if all(cell == player for cell in column): 
                 return player
         for diagonal in get_diagonals(board):
             if all(cell == player for cell in diagonal):
-                running = False 
                 return player
     else:
         return
 
 #function: Creates a list of 3 columns
 def get_columns(board):
-    result = [[y [x] for y in board] for x in range(3)]
+    result = [[y [x_idx] for y in board] for x_idx in range(3)]
     return result
 #function: Creates a list of 2 diagnals
 def get_diagonals(board):
@@ -56,17 +54,15 @@ def get_diagonals(board):
 
 #function: Handles other functions and ends the game when needed
 def play_game(board):
-    global running
-    running = True
-    while running == True:
+    global winner
+    winner = None
+    while winner == None:
         for player in ["X","O"]:
-            if running == True:
+            if winner == None:
                 play_move(board, player)
                 print_board(board)
-                if get_winner(board)!=None:
-                    print(get_winner(board), "won!")
-            else:
-                return
+                winner = get_winner(board)
+    print(winner, "won!")
 
 board = create_board()
 print_board(board)
