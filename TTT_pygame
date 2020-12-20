@@ -1,0 +1,112 @@
+import pygame
+
+
+pygame.init()
+clock = pygame.time.Clock()
+
+RUNNING = True
+
+width = 800
+height = 800
+
+myfont = pygame.font.SysFont('Comic Sans MS', 150, bold=True)
+
+screen = pygame.display.set_mode((width,height))
+pygame.display.set_caption("Tic-Tac-Toe")
+
+vertical_line = pygame.Rect(width/3-5, 0, 10, height)
+vertical_line1 = pygame.Rect(2*width/3-5, 0, 10, height)
+
+horizontal_line = pygame.Rect(0, height/3-5, width, 10)
+horizontal_line1 = pygame.Rect(0, 2*height/3-5, width, 10)
+
+player = "X"
+opponent = "O"
+
+#function: creates board made of -
+def create_board():
+    return [["" for i in range(3)] for i in range(3)]
+
+#function: prints the board in an easy to read format
+def print_board(board):
+    for y in board:
+        for x in y:
+            print(x, end = "   ")
+        print("\n")
+
+#function: changes element - in list to either X or O 
+def play_move(board, mousey, mousex, player):
+    for i in (width/3, 2*width/3, width):
+            for j in (width/3, 2*width/3, width):
+                if mousey < i and mousex < j:
+                    if board[int(i/width*3-1)][int(j/width*3-1)] == "":
+                        board[int(i/width*3-1)][int(j/width*3-1)] = player
+                    return
+
+#function: Tests if any of the winner possibilities is true and returns the winner
+def get_winner(board):
+    for player in ["X","O"]:
+        for y in board:
+            if all(cell == player for cell in y):
+                return player, y, "row"
+        for column in get_columns(board):
+            if all(cell == player for cell in column): 
+                return player, column, "col"
+        for diagonal in get_diagonals(board):
+            if all(cell == player for cell in diagonal):
+                return player, diagonal, "diag"
+    else:
+        return None,None,None
+
+#function: Creates a list of 3 columns
+def get_columns(board):
+    result = [[y [x_idx] for y in board] for x_idx in range(3)]
+    return result
+#function: Creates a list of 2 diagnals
+def get_diagonals(board):
+    diag1 = [board[index][index] for index in range(3)]
+    diag2 = [board [row] [column] for row, column in enumerate(range(2, -1, -1))]
+    
+    return diag1, diag2
+
+#function: Handles other functions and ends the game when needed
+
+def drawline():
+    pass
+board = create_board()
+winner = None
+while RUNNING:
+    for event in pygame.event.get():
+        if event.type== pygame.QUIT:
+            RUNNING = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if get_winner(board)[0] == None:
+                mousex, mousey = pygame.mouse.get_pos()
+                play_move(board, mousey, mousex, player)
+                player, opponent = opponent, player
+
+    screen.fill((100,100,100)) 
+    for line in (vertical_line, vertical_line1, horizontal_line, horizontal_line1):
+        pygame.draw.rect(screen, (255,255,255), line)
+    for i in range(3):
+        for j in range(3):
+            cell_block = myfont.render(board[i][j], False, (255,255,255))
+            screen.blit(cell_block, ((j*2+1)/6*width-60, (i*2+1)/6*height-100))
+
+    if get_winner(board)[0] == opponent:
+        listline = get_winner(board)[1]
+        linetype = get_winner(board)[2]
+        if linetype == "row":
+            y_coord = ((2*board.index(listline)+1)/6*height)
+            pygame.draw.line(screen, (255, 0, 0), (0, y_coord+10), (width, y_coord+10), 5)
+        if linetype == "col":
+            x_coord = ((2*get_columns(board).index(listline)+1)/6*width)
+            pygame.draw.line(screen, (255, 0, 0), (x_coord, 0), (x_coord, height),10)
+        if linetype == "diag":
+            x_coord1 = ((4*get_diagonals(board).index(listline)+1)/6*height)
+            x_coord2 = (1 - ((4*get_diagonals(board).index(listline)+1)/6))*height
+            pygame.draw.line(screen, (255,0,0), (x_coord1,width/6), (x_coord2, 5*width/6),10)  
+    
+    
+    clock.tick(60)
+    pygame.display.flip()
